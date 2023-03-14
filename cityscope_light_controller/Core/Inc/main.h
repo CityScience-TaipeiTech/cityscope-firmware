@@ -66,7 +66,7 @@ void Error_Handler(void);
 #define LED_Pin GPIO_PIN_3
 #define LED_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-void delay_us(uint16_t us);
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
