@@ -47,7 +47,6 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
   {
     if (!Echo_Raised) // if the first value is not captured
     {
-      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
       IC_Val1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_4); // read the first value
       Echo_Raised = 1;                                          // set the first captured as true
     }
@@ -72,7 +71,11 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
   }
 }
 
-uint32_t HCSR04_Get_Distance(void)
+int16_t HCSR04_Get_Distance(void)
 {
+  if (Echo_Raised)
+  {
+    return -1;
+  }
   return Distance;
 }

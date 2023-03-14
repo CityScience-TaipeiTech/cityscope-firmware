@@ -49,10 +49,17 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-/* Definitions for defaultTask */
-osThreadId_t defaultTaskHandle;
-const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
+/* Definitions for ReadDistance */
+osThreadId_t ReadDistanceHandle;
+const osThreadAttr_t ReadDistance_attributes = {
+  .name = "ReadDistance",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
+/* Definitions for UITask */
+osThreadId_t UITaskHandle;
+const osThreadAttr_t UITask_attributes = {
+  .name = "UITask",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
@@ -62,7 +69,8 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* USER CODE END FunctionPrototypes */
 
-void StartDefaultTask(void *argument);
+void StartReadDistance(void *argument);
+void StartUITask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -93,8 +101,11 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of defaultTask */
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  /* creation of ReadDistance */
+  ReadDistanceHandle = osThreadNew(StartReadDistance, NULL, &ReadDistance_attributes);
+
+  /* creation of UITask */
+  UITaskHandle = osThreadNew(StartUITask, NULL, &UITask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -106,24 +117,44 @@ void MX_FREERTOS_Init(void) {
 
 }
 
-/* USER CODE BEGIN Header_StartDefaultTask */
+/* USER CODE BEGIN Header_StartReadDistance */
 /**
-  * @brief  Function implementing the defaultTask thread.
+  * @brief  Function implementing the ReadDistance thread.
   * @param  argument: Not used
   * @retval None
   */
-/* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void *argument)
+/* USER CODE END Header_StartReadDistance */
+void StartReadDistance(void *argument)
 {
-  /* USER CODE BEGIN StartDefaultTask */
+  /* USER CODE BEGIN StartReadDistance */
   /* Infinite loop */
-  for (;;)
+  for(;;)
   {
-    // HCSR04_Read_GPIO();
     HCSR04_Read();
-    osDelay(1000);
+    osDelay(50);
   }
-  /* USER CODE END StartDefaultTask */
+  /* USER CODE END StartReadDistance */
+}
+
+/* USER CODE BEGIN Header_StartUITask */
+/**
+* @brief Function implementing the UITask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartUITask */
+void StartUITask(void *argument)
+{
+  /* USER CODE BEGIN StartUITask */
+  /* Infinite loop */
+  for(;;)
+  {
+    int16_t dis = HCSR04_Get_Distance();
+    if (dis == -1) continue;
+    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    osDelay(dis*5);
+  }
+  /* USER CODE END StartUITask */
 }
 
 /* Private application code --------------------------------------------------*/

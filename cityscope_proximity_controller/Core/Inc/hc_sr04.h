@@ -12,7 +12,7 @@ void HCSR04_Init(TIM_HandleTypeDef *htim);
 void HCSR04_Read (void);
 void HCSR04_Read_GPIO(void);
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim);
-uint32_t HCSR04_Get_Distance(void);
+int16_t HCSR04_Get_Distance(void);
 #ifdef __cplusplus
 }
 #endif
