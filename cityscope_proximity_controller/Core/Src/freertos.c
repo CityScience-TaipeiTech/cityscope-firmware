@@ -116,7 +116,6 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  HCSR04_Init(&htim2);
   /* Infinite loop */
   for (;;)
   {
