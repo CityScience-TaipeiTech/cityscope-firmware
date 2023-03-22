@@ -3,6 +3,9 @@
     "cortex-debug.armToolchainPath.linux": "/usr/share/gcc-arm-none-eabi/bin",
     "cortex-debug.armToolchainPath": "/home/justin/.config/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-tools/arm-none-eabi-gcc/12.2.1-1.2.1/.content/bin",
     "files.associations": {
-        "tim.h": "c"
+        "tim.h": "c",
+        "main.h": "c",
+        "stm32f3xx_hal.h": "c",
+        "cmsis_os.h": "c"
     },
 }

@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "CO_app_STM32.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,6 +91,7 @@ int main(void)
   MX_CAN_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM16_Init();
   /* USER CODE BEGIN 2 */
   HCSR04_Init(&htim2);
   /* USER CODE END 2 */
@@ -173,7 +174,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+  if (htim == canopenNodeSTM32->timerHandle)
+  {
+    canopen_app_interrupt();
+  }
   /* USER CODE END Callback 1 */
 }
 

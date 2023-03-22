@@ -25,9 +25,11 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "CO_app_STM32.h"
 #include "tim.h"
 #include "hc_sr04.h"
 #include "comment.h"
+#include "can.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,6 +65,13 @@ const osThreadAttr_t UITask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for canopenTask */
+osThreadId_t canopenTaskHandle;
+const osThreadAttr_t canopenTask_attributes = {
+  .name = "canopenTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -71,6 +80,7 @@ const osThreadAttr_t UITask_attributes = {
 
 void StartReadDistance(void *argument);
 void StartUITask(void *argument);
+void canopen_task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -106,6 +116,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of UITask */
   UITaskHandle = osThreadNew(StartUITask, NULL, &UITask_attributes);
+
+  /* creation of canopenTask */
+  canopenTaskHandle = osThreadNew(canopen_task, NULL, &canopenTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -155,6 +168,32 @@ void StartUITask(void *argument)
     osDelay(dis*5);
   }
   /* USER CODE END StartUITask */
+}
+
+/* USER CODE BEGIN Header_canopen_task */
+/**
+* @brief Function implementing the canopenTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_canopen_task */
+void canopen_task(void *argument)
+{
+  /* USER CODE BEGIN canopen_task */
+  CANopenNodeSTM32 canOpenNodeSTM32;
+  canOpenNodeSTM32.CANHandle = &hcan;
+  canOpenNodeSTM32.HWInitFunction = MX_CAN_Init;
+  canOpenNodeSTM32.timerHandle = &htim16;
+  canOpenNodeSTM32.desiredNodeID = 21;
+  canOpenNodeSTM32.baudrate = 125;
+  canopen_app_init(&canOpenNodeSTM32);
+  /* Infinite loop */
+  for(;;)
+  {
+    canopen_app_process();
+    osDelay(1);
+  }
+  /* USER CODE END canopen_task */
 }
 
 /* Private application code --------------------------------------------------*/
