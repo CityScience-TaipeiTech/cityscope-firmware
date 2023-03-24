@@ -70,7 +70,7 @@ int main(void)
 
   /* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/  
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
@@ -91,7 +91,7 @@ int main(void)
   MX_CAN_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
-  MX_TIM16_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   HCSR04_Init(&htim2);
   /* USER CODE END 2 */

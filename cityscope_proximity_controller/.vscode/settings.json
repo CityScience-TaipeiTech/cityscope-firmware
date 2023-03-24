@@ -1,11 +1,10 @@
 {
-    "ros.distro": "noetic",
-    "cortex-debug.armToolchainPath.linux": "/usr/share/gcc-arm-none-eabi/bin",
-    "cortex-debug.armToolchainPath": "/home/justin/.config/Code/User/globalStorage/bmd.stm32-for-vscode/@xpack-dev-tools/arm-none-eabi-gcc/12.2.1-1.2.1/.content/bin",
+    "cortex-debug.openocdPath.windows":"C:/msys64/mingw64/bin/openocd.exe",
+    "cortex-debug.gdbPath.windows": "C:/msys64/mingw64/bin/arm-none-eabi-gdb.exe",
+    "cortex-debug.variableUseNaturalFormat": true,
     "files.associations": {
-        "tim.h": "c",
-        "main.h": "c",
-        "stm32f3xx_hal.h": "c",
-        "cmsis_os.h": "c"
-    },
+        "gpio.h": "c",
+        "co_app_stm32.h": "c",
+        "od.h": "c"
+    }
 }

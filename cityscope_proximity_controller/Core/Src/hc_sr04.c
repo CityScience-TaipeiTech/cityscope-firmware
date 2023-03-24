@@ -1,6 +1,6 @@
 #include "tim.h"
 #include "hc_sr04.h"
-#include "comment.h"
+//#include "comment.h"
 
 TIM_HandleTypeDef *hc_tim;
 

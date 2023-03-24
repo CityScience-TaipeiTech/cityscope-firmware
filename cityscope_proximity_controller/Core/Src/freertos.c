@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * File Name          : freertos.c
-  * Description        : Code for freertos applications
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2023 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * File Name          : freertos.c
+ * Description        : Code for freertos applications
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2023 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "CO_app_STM32.h"
+#include "OD.h"
 #include "tim.h"
 #include "hc_sr04.h"
 #include "comment.h"
@@ -52,19 +53,6 @@
 
 /* USER CODE END Variables */
 /* Definitions for ReadDistance */
-osThreadId_t ReadDistanceHandle;
-const osThreadAttr_t ReadDistance_attributes = {
-  .name = "ReadDistance",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
-};
-/* Definitions for UITask */
-osThreadId_t UITaskHandle;
-const osThreadAttr_t UITask_attributes = {
-  .name = "UITask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
 /* Definitions for canopenTask */
 osThreadId_t canopenTaskHandle;
 const osThreadAttr_t canopenTask_attributes = {
@@ -112,10 +100,8 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* creation of ReadDistance */
-  ReadDistanceHandle = osThreadNew(StartReadDistance, NULL, &ReadDistance_attributes);
 
   /* creation of UITask */
-  UITaskHandle = osThreadNew(StartUITask, NULL, &UITask_attributes);
 
   /* creation of canopenTask */
   canopenTaskHandle = osThreadNew(canopen_task, NULL, &canopenTask_attributes);
@@ -132,50 +118,26 @@ void MX_FREERTOS_Init(void) {
 
 /* USER CODE BEGIN Header_StartReadDistance */
 /**
-  * @brief  Function implementing the ReadDistance thread.
-  * @param  argument: Not used
-  * @retval None
-  */
+ * @brief  Function implementing the ReadDistance thread.
+ * @param  argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_StartReadDistance */
-void StartReadDistance(void *argument)
-{
-  /* USER CODE BEGIN StartReadDistance */
-  /* Infinite loop */
-  for(;;)
-  {
-    HCSR04_Read();
-    osDelay(50);
-  }
-  /* USER CODE END StartReadDistance */
-}
 
 /* USER CODE BEGIN Header_StartUITask */
 /**
-* @brief Function implementing the UITask thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the UITask thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_StartUITask */
-void StartUITask(void *argument)
-{
-  /* USER CODE BEGIN StartUITask */
-  /* Infinite loop */
-  for(;;)
-  {
-    int16_t dis = HCSR04_Get_Distance();
-    if (dis == -1) continue;
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    osDelay(dis*5);
-  }
-  /* USER CODE END StartUITask */
-}
 
 /* USER CODE BEGIN Header_canopen_task */
 /**
-* @brief Function implementing the canopenTask thread.
-* @param argument: Not used
-* @retval None
-*/
+ * @brief Function implementing the canopenTask thread.
+ * @param argument: Not used
+ * @retval None
+ */
 /* USER CODE END Header_canopen_task */
 void canopen_task(void *argument)
 {
@@ -183,14 +145,18 @@ void canopen_task(void *argument)
   CANopenNodeSTM32 canOpenNodeSTM32;
   canOpenNodeSTM32.CANHandle = &hcan;
   canOpenNodeSTM32.HWInitFunction = MX_CAN_Init;
-  canOpenNodeSTM32.timerHandle = &htim16;
+  canOpenNodeSTM32.timerHandle = &htim17;
   canOpenNodeSTM32.desiredNodeID = 21;
   canOpenNodeSTM32.baudrate = 125;
   canopen_app_init(&canOpenNodeSTM32);
   /* Infinite loop */
-  for(;;)
+  for (;;)
   {
     canopen_app_process();
+    OD_PERSIST_COMM.x6000_counter++;                   // ??��?�在PERSIST?��???
+    OD_set_u32(OD_find(OD, 0x6000), 0x003,OD_PERSIST_COMM.x6000_counter, false); // change_obj, index change , value,false
+    CO_TPDOsendRequest(&canopenNodeSTM32->canOpenStack->TPDO[0]); //send openstack TPDO[0]
+    //OD_PERSIST_COMM.x6001_recive;
     osDelay(1);
   }
   /* USER CODE END canopen_task */
