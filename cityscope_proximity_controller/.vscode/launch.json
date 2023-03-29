@@ -3,13 +3,13 @@
     "configurations": [
 
         {
-            "name": "Cortex Debug", //名稱可以自訂
-            "cwd": "${workspaceFolder}", //不要做更動
+            "name": "Cortex Debug Windows", 
+            "cwd": "${workspaceFolder}",
             "executable": "C:/Users/walker/Desktop/cityscope_light_controller/build/cityscope_proximity_controller.elf", //請改為編譯出來的elf檔位置
-            "request": "launch", //不要做更動
-            "type": "cortex-debug", //不要做更動
-            "servertype": "openocd", //不要做更動
-            "device": "STM32F303K8", //改為使用的STM32晶片名稱
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "device": "STM32F303K8",
             "windows":{
                 "configFiles": [
                     
@@ -26,6 +26,21 @@
                 ],
             },
             "preLaunchCommands": ["make -j 12"],//加了這行，除錯前會進行重新編譯
+        },
+        {
+            "name": "Cortex Debug Linux",
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/cityscope_proximity_controller.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "runToEntryPoint": "main",
+            "device": "STM32F303K8",
+            "configFiles": [
+                "/usr/local/share/openocd/scripts/interface/stlink-v2-1.cfg",
+                "/usr/local/share/openocd/scripts/target/stm32f3x.cfg" // for original STM
+                // "${workspaceRoot}/configs/cs-stm32f1x.cfg" // for Chineses clone STM
+            ],
         }
     ]
 }
