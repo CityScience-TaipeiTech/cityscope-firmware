@@ -15,7 +15,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="DS301_profile_mcu.xdd" fileCreator="Justin Zhang" fileCreationDate="2020-11-23" fileCreationTime="13:00:00.0000000+08:00" fileModifiedBy="" fileModificationDate="2023-03-29" fileModificationTime="11:30:05.2392070+08:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q1="http://www.canopen.org/xml/1.1" xsi:type="q1:ProfileBody_Device_CANopen" formatName="CANopen" formatVersion="1.0" fileName="DS301_profile_mcu.xdd" fileCreator="Justin Zhang" fileCreationDate="2020-11-23" fileCreationTime="13:00:00.0000000+08:00" fileModifiedBy="" fileModificationDate="2023-03-30" fileModificationTime="16:07:45.1512430+08:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <q1:DeviceIdentity>
         <q1:vendorName>Taipei Tech</q1:vendorName>
         <q1:vendorID>0</q1:vendorID>
@@ -483,7 +483,7 @@
           <q1:parameter uniqueID="UID_OBJ_1017" access="readWrite">
             <label lang="en">Producer heartbeat time</label>
             <UINT />
-            <q1:defaultValue value="0" />
+            <q1:defaultValue value="1000" />
             <q1:property name="CO_countLabel" value="HB_PROD" />
             <q1:property name="CO_storageGroup" value="PERSIST_COMM" />
           </q1:parameter>
@@ -850,7 +850,7 @@
           <q1:parameter uniqueID="UID_SUB_1A0001" access="readWrite">
             <label lang="en">Application object 1</label>
             <UDINT />
-            <q1:defaultValue value="0x60000020" />
+            <q1:defaultValue value="0x60000010" />
           </q1:parameter>
           <q1:parameter uniqueID="UID_SUB_1A0002" access="readWrite">
             <label lang="en">Application object 2</label>
@@ -910,7 +910,7 @@
         <ProfileTechnology>CANopen</ProfileTechnology>
       </ISO15745Reference>
     </ProfileHeader>
-    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="DS301_profile_mcu.xdd" fileCreator="Justin Zhang" fileCreationDate="2020-11-23" fileCreationTime="13:00:00.0000000+08:00" fileModificationDate="2023-03-29" fileModificationTime="11:30:05.2392070+08:00" fileVersion="1" supportedLanguages="en" xmlns="">
+    <ProfileBody xmlns:q2="http://www.canopen.org/xml/1.1" xsi:type="q2:ProfileBody_CommunicationNetwork_CANopen" formatName="CANopen" formatVersion="1.0" fileName="DS301_profile_mcu.xdd" fileCreator="Justin Zhang" fileCreationDate="2020-11-23" fileCreationTime="13:00:00.0000000+08:00" fileModificationDate="2023-03-30" fileModificationTime="16:07:45.1512430+08:00" fileVersion="1" supportedLanguages="en" xmlns="">
       <ApplicationLayers>
         <q2:CANopenObjectList>
           <CANopenObject index="1000" name="Device type" objectType="7" PDOmapping="no" uniqueIDRef="UID_OBJ_1000" />

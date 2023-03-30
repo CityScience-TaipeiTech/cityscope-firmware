@@ -55,23 +55,23 @@
 /* Definitions for ReadDistance */
 osThreadId_t ReadDistanceHandle;
 const osThreadAttr_t ReadDistance_attributes = {
-    .name = "ReadDistance",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityNormal,
+  .name = "ReadDistance",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
 };
 /* Definitions for UITask */
 osThreadId_t UITaskHandle;
 const osThreadAttr_t UITask_attributes = {
-    .name = "UITask",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityLow,
+  .name = "UITask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for canopenTask */
 osThreadId_t canopenTaskHandle;
 const osThreadAttr_t canopenTask_attributes = {
-    .name = "canopenTask",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityHigh,
+  .name = "canopenTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityRealtime,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -114,8 +114,10 @@ void MX_FREERTOS_Init(void) {
   /* Create the thread(s) */
   /* creation of ReadDistance */
   ReadDistanceHandle = osThreadNew(StartReadDistance, NULL, &ReadDistance_attributes);
+
   /* creation of UITask */
   UITaskHandle = osThreadNew(StartUITask, NULL, &UITask_attributes);
+
   /* creation of canopenTask */
   canopenTaskHandle = osThreadNew(canopen_task, NULL, &canopenTask_attributes);
 
@@ -152,6 +154,7 @@ void StartReadDistance(void *argument)
   }
   /* USER CODE END StartReadDistance */
 }
+
 /* USER CODE BEGIN Header_StartUITask */
 /**
  * @brief Function implementing the UITask thread.
@@ -173,6 +176,7 @@ void StartUITask(void *argument)
   }
   /* USER CODE END StartUITask */
 }
+
 /* USER CODE BEGIN Header_canopen_task */
 /**
  * @brief Function implementing the canopenTask thread.
@@ -187,7 +191,7 @@ void canopen_task(void *argument)
   canOpenNodeSTM32.CANHandle = &hcan;
   canOpenNodeSTM32.HWInitFunction = MX_CAN_Init;
   canOpenNodeSTM32.timerHandle = &htim17;
-  canOpenNodeSTM32.desiredNodeID = 21;
+  canOpenNodeSTM32.desiredNodeID = 11;
   canOpenNodeSTM32.baudrate = 125;
   canopen_app_init(&canOpenNodeSTM32);
   /* Infinite loop */
