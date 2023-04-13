@@ -191,7 +191,7 @@ void canopen_task(void *argument)
   canOpenNodeSTM32.CANHandle = &hcan;
   canOpenNodeSTM32.HWInitFunction = MX_CAN_Init;
   canOpenNodeSTM32.timerHandle = &htim17;
-  canOpenNodeSTM32.desiredNodeID = 11;
+  canOpenNodeSTM32.desiredNodeID = (uint8_t)get_NodeID();
   canOpenNodeSTM32.baudrate = 125;
   canopen_app_init(&canOpenNodeSTM32);
   /* Infinite loop */

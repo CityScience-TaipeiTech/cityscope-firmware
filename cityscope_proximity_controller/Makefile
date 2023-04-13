@@ -42,6 +42,7 @@ Core/Src/main.c \
 Core/Src/gpio.c \
 Core/Src/freertos.c \
 Core/Src/can.c \
+Core/Src/flashROM.c \
 Core/Src/tim.c \
 Core/Src/stm32f3xx_it.c \
 Core/Src/stm32f3xx_hal_msp.c \
