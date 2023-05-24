@@ -71,19 +71,12 @@ void MX_CAN_Init(void)
   sFilterConfig.FilterMaskIdHigh = 0;
   sFilterConfig.FilterMaskIdLow = 0;
   sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT; // set filter scale
-  sFilterConfig.FilterActivation = ENABLE;
+  sFilterConfig.FilterActivation = DISABLE;
 
-  HAL_CAN_ConfigFilter(&hcan, &sFilterConfig); // configure CAN filter
+  // HAL_CAN_ConfigFilter(&hcan, &sFilterConfig); // configure CAN filter
 
-  HAL_CAN_Start(&hcan);                                              // start CAN
+  // HAL_CAN_Start(&hcan);                                              // start CAN
   HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);  // enable interrupts
-  uint8_t TxData[8];
-  TxData[0] = 0x66;
-  if (HAL_CAN_AddTxMessage(&hcan, &pHeader, TxData, &TxMailbox) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
   /* USER CODE END CAN_Init 2 */
 
 }
@@ -119,6 +112,13 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
     GPIO_InitStruct.Alternate = GPIO_AF9_CAN;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    /* CAN interrupt Init */
+    HAL_NVIC_SetPriority(CAN_TX_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(CAN_TX_IRQn);
+    HAL_NVIC_SetPriority(CAN_RX0_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(CAN_RX0_IRQn);
+    HAL_NVIC_SetPriority(CAN_RX1_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(CAN_RX1_IRQn);
   /* USER CODE BEGIN CAN_MspInit 1 */
 
   /* USER CODE END CAN_MspInit 1 */
@@ -142,6 +142,10 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_11|GPIO_PIN_12);
 
+    /* CAN interrupt Deinit */
+    HAL_NVIC_DisableIRQ(CAN_TX_IRQn);
+    HAL_NVIC_DisableIRQ(CAN_RX0_IRQn);
+    HAL_NVIC_DisableIRQ(CAN_RX1_IRQn);
   /* USER CODE BEGIN CAN_MspDeInit 1 */
 
   /* USER CODE END CAN_MspDeInit 1 */

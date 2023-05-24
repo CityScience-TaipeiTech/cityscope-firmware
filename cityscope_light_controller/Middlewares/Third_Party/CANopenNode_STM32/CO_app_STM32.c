@@ -231,9 +231,9 @@ void
 canopen_app_interrupt(void) {
     CO_LOCK_OD(CO->CANmodule);
     if (!CO->nodeIdUnconfigured && CO->CANmodule->CANnormal) {
-        bool_t syncWas = false;
-        /* get time difference since last function call */
-        uint32_t timeDifference_us = 1000; // 1ms second
+            bool_t syncWas = false;
+            /* get time difference since last function call */
+            uint32_t timeDifference_us = 1000; // 1ms second
 
 #if (CO_CONFIG_SYNC) & CO_CONFIG_SYNC_ENABLE
         syncWas = CO_process_SYNC(CO, timeDifference_us, NULL);
@@ -246,6 +246,6 @@ canopen_app_interrupt(void) {
 #endif
 
         /* Further I/O or nonblocking application code may go here. */
-    }
+        }
     CO_UNLOCK_OD(CO->CANmodule);
 }

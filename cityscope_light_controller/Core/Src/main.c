@@ -20,9 +20,9 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "can.h"
-#include "dma.h"
 #include "tim.h"
 #include "gpio.h"
+#include "CO_app_STM32.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -66,6 +66,9 @@ void MX_FREERTOS_Init(void);
   * @retval int
   */
 int main(void)
+
+
+
 {
   /* USER CODE BEGIN 1 */
 
@@ -89,10 +92,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_CAN_Init();
   MX_TIM2_Init();
-  MX_TIM15_Init();
+  MX_TIM3_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
   /* USER CODE END 2 */
@@ -182,7 +185,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+  if (htim == canopenNodeSTM32->timerHandle)
+  {
+    canopen_app_interrupt();
+  }
   /* USER CODE END Callback 1 */
 }
 

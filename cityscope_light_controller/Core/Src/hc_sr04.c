@@ -13,7 +13,7 @@ void HCSR04_Read(void)
     delay_us(10);                                                    // wait for 10 us
     // osDelay(1);
     HAL_GPIO_WritePin(HC_TRIG_GPIO_Port, HC_TRIG_Pin, GPIO_PIN_RESET); // pull the TRIG pin low
-    HAL_TIM_IC_Start_IT(&htim15, TIM_CHANNEL_1);
+    HAL_TIM_IC_Start_IT(&htim17, TIM_CHANNEL_1);
 }
 
 
