@@ -1,58 +1,53 @@
 #include "tim.h"
 #include "ws2812.h"
 
-static uint8_t LED_Data[WS2821_MAX_LED][4];
-static uint32_t pwmData[(24 * WS2821_MAX_LED) + 50];
-
-uint8_t data_sent_flag = 0;
-uint16_t indx = 0;
-
-void WS2812_SetLed(uint8_t led_id, uint8_t red, uint8_t green, uint8_t blue)
+inline void delay_ns(uint16_t ns)
 {
-  LED_Data[led_id][0] = led_id;
-  LED_Data[led_id][1] = green;
-  LED_Data[led_id][2] = red;
-  LED_Data[led_id][3] = blue;
+  uint16_t iterations = ns / cycle;
+  for (volatile uint16_t i = 0; i < iterations; i++)
+  {
+    __NOP();
+  }
 }
 
-void WS2812_Send(void)
+void sendByte(uint8_t byte)
 {
-  indx = 0;
-  uint32_t color;
-  for (int i = 0; i < WS2821_MAX_LED; i++)
+  for (uint8_t bit = 0x80; bit; bit >>= 1)
   {
-    color = ((LED_Data[i][1] << 16) | (LED_Data[i][2] << 8) | (LED_Data[i][3]));
-    for (int i = 23; i >= 0; i--)
+    if (byte & bit) // 1 bit
     {
-      if (color & (1 << i))
-      {
-        pwmData[indx] = 60; // 80 * 0.68
-      } else
-      {
-        pwmData[indx] = 30; // 80 * 0.32
-      }
-      indx++;
+      HAL_GPIO_WritePin(WS2812_GPIO_Port, WS2812_Pin, 1);
+      delay_ns(T1H);
+      HAL_GPIO_WritePin(WS2812_GPIO_Port, WS2812_Pin, 0);
+      delay_ns(T1L);
+    }
+    else // 0 bit
+    {
+      HAL_GPIO_WritePin(WS2812_GPIO_Port, WS2812_Pin, 1);
+      delay_ns(T0H);
+      HAL_GPIO_WritePin(WS2812_GPIO_Port, WS2812_Pin, 0);
+      delay_ns(T0L);
     }
   }
-
-  for (int i = 0; i < 50; i++)
-  {
-    pwmData[indx] = 0;
-    indx++;
-  }
-
-  HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_1, pwmData, indx);
-  while (!data_sent_flag)
-  {
-  };
-  data_sent_flag = 0;
+}
+void sendPixel(uint8_t r, uint8_t g, uint8_t b)
+{
+  sendByte(g);
+  sendByte(r);
+  sendByte(b);
 }
 
-void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim)
+void ws2812_reset(void)
 {
-  if (htim == &htim2) 
+  HAL_GPIO_WritePin(WS2812_GPIO_Port, WS2812_Pin, 0);
+  delay_ns(RES);
+}
+
+void clear(void)
+{
+  for (int i = 0; i < WS2821_MAX_LED; i++)
   {
-    HAL_TIM_PWM_Stop_DMA(&htim2, TIM_CHANNEL_1);
-    data_sent_flag = 1;
+    sendPixel(0, 0, 0);
   }
+  ws2812_reset();
 }

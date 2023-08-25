@@ -53,15 +53,15 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+uint32_t get_NodeID(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define N_DI_Pin GPIO_PIN_0
-#define N_DI_GPIO_Port GPIOA
+#define WS2812_Pin GPIO_PIN_0
+#define WS2812_GPIO_Port GPIOA
 #define HC_TRIG_Pin GPIO_PIN_1
 #define HC_TRIG_GPIO_Port GPIOA
-#define HC_ECHO_Pin GPIO_PIN_2
+#define HC_ECHO_Pin GPIO_PIN_3
 #define HC_ECHO_GPIO_Port GPIOA
 #define LED_Pin GPIO_PIN_3
 #define LED_GPIO_Port GPIOB

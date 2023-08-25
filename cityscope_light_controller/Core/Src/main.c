@@ -20,13 +20,12 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "can.h"
-#include "dma.h"
 #include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include"CO_app_STM32.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,7 +52,8 @@
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
-
+uint32_t get_NodeID(void);
+uint32_t NodeID[1];
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -89,12 +89,14 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
   MX_CAN_Init();
   MX_TIM2_Init();
-  MX_TIM15_Init();
+  MX_TIM3_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim2);
+  Flash_Read_Data(0x0800FFFC, NodeID, 1);
+  HAL_FLASH_Lock();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -155,7 +157,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+uint32_t get_NodeID(void)
+{
+  return NodeID[0];
+}
 void delay_us(uint16_t us)
 {
   __HAL_TIM_SET_COUNTER(&htim2, 0); // set the counter value a 0
@@ -182,7 +187,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+  if (htim == canopenNodeSTM32->timerHandle)
+  {
+    canopen_app_interrupt();
+  }
   /* USER CODE END Callback 1 */
 }
 

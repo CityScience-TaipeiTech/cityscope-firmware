@@ -55,23 +55,23 @@
 /* Definitions for ReadDistance */
 osThreadId_t ReadDistanceHandle;
 const osThreadAttr_t ReadDistance_attributes = {
-  .name = "ReadDistance",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityHigh,
+    .name = "ReadDistance",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityHigh,
 };
 /* Definitions for UITask */
 osThreadId_t UITaskHandle;
 const osThreadAttr_t UITask_attributes = {
-  .name = "UITask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+    .name = "UITask",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityNormal,
 };
 /* Definitions for canopenTask */
 osThreadId_t canopenTaskHandle;
 const osThreadAttr_t canopenTask_attributes = {
-  .name = "canopenTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityRealtime,
+    .name = "canopenTask",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityRealtime,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -86,11 +86,12 @@ void canopen_task(void *argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
-void MX_FREERTOS_Init(void) {
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
+void MX_FREERTOS_Init(void)
+{
   /* USER CODE BEGIN Init */
 
   /* USER CODE END Init */
@@ -128,7 +129,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
-
 }
 
 /* USER CODE BEGIN Header_StartReadDistance */
@@ -144,13 +144,16 @@ void StartReadDistance(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    HCSR04_Read();
     int16_t dis = HCSR04_Get_Distance();
-    if (dis == -1) continue;
-    OD_PERSIST_COMM.x6000_proximity_data = dis;
-    OD_set_u16(OD_find(OD, 0x6000), 0x000, OD_PERSIST_COMM.x6000_proximity_data, false); // change_obj, index change , value,false
-    CO_TPDOsendRequest(&canopenNodeSTM32->canOpenStack->TPDO[0]);                        // send openstack TPDO[0]
-    osDelay(50);
+    if (dis == -1)
+      continue;
+    if (dis < 5 && dis != 0)
+    {
+      OD_PERSIST_COMM.x6000_proximity_data = dis;
+      OD_set_u16(OD_find(OD, 0x6000), 0x000, OD_PERSIST_COMM.x6000_proximity_data, false); // change_obj, index change , value,false
+      CO_TPDOsendRequest(&canopenNodeSTM32->canOpenStack->TPDO[0]); // send openstack TPDO[0]
+      osDelay(3000);
+    }
   }
   /* USER CODE END StartReadDistance */
 }
@@ -172,7 +175,14 @@ void StartUITask(void *argument)
     if (dis == -1)
       continue;
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    osDelay(dis * 5);
+    if ((dis * 5) > 2000)
+    {
+      osDelay(2000);
+    }
+    else
+    {
+      osDelay(dis * 5);
+    }
   }
   /* USER CODE END StartUITask */
 }
@@ -191,13 +201,14 @@ void canopen_task(void *argument)
   canOpenNodeSTM32.CANHandle = &hcan;
   canOpenNodeSTM32.HWInitFunction = MX_CAN_Init;
   canOpenNodeSTM32.timerHandle = &htim17;
-  canOpenNodeSTM32.desiredNodeID = 11;
+  canOpenNodeSTM32.desiredNodeID = (uint8_t)get_NodeID();
   canOpenNodeSTM32.baudrate = 125;
   canopen_app_init(&canOpenNodeSTM32);
   /* Infinite loop */
   for (;;)
   {
     canopen_app_process();
+    HCSR04_Read();
     osDelay(1);
   }
   /* USER CODE END canopen_task */
@@ -207,4 +218,3 @@ void canopen_task(void *argument)
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-
